@@ -1,10 +1,10 @@
 import React from "react";
 import TrashTable from "./TrashTable";
 
-const index = () => {
+const index = ({ data, isLoading }) => {
   return (
     <div className="py-3">
-      <TrashTable />
+      <TrashTable data={data} isLoading={isLoading} />
     </div>
   );
 };

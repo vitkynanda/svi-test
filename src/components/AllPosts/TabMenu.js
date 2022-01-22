@@ -1,5 +1,4 @@
 import { Tab } from "@headlessui/react";
-import { useState } from "react";
 import Published from "./Published";
 import Draft from "./Draft";
 import Trash from "./Trash";
@@ -7,19 +6,15 @@ import { useQuery } from "react-query";
 import { getAllArticle } from "../../constants/api";
 
 export default function TabMenu() {
-  const [params, setParams] = useState({
-    limit: 1,
-    offset: 1,
-  });
-
   const { data, isLoading } = useQuery("getAllArticle", () =>
-    getAllArticle(params)
+    getAllArticle({ limit: 100, offset: 0 })
   );
+
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
   return (
-    <div className="w-full m-3">
+    <div className=" m-3">
       <Tab.Group>
         <Tab.List className="w-1/2 flex shadow-md rounded-md">
           <Tab
@@ -33,8 +28,8 @@ export default function TabMenu() {
             }
           >
             Published
-            <span className="absolute top-0 bg-gray-500 w-5 rounded-full text-white">
-              1
+            <span className="absolute top-0  text-xs right-10 bg-gray-500 w-5 h-5 flex flex-col justify-center rounded-full text-white">
+              {data?.data?.filter((post) => post.status === "Published").length}
             </span>
           </Tab>
           <Tab
@@ -47,36 +42,45 @@ export default function TabMenu() {
               )
             }
           >
-            Trash
-            <span className="absolute top-0 bg-gray-500 w-5 rounded-full text-white">
-              1
+            Drafts
+            <span className="absolute top-0  text-xs right-12 bg-gray-500 w-5 h-5 flex flex-col justify-center rounded-full text-white">
+              {data?.data?.filter((post) => post.status === "Drafts").length}
             </span>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "w-2/6 text-sm py-2 transition-all duration-300 relative rounded-r-sm",
+                "w-2/6 text-sm py-2 transition-all  duration-300 relative rounded-r-sm",
                 selected
                   ? "bg-blue-700 text-white"
                   : "bg-gray-100  border border-gray-300"
               )
             }
           >
-            Draft
-            <span className="absolute top-0 bg-gray-500 w-5 rounded-full text-white">
-              1
+            Trashed
+            <span className="absolute top-0  text-xs right-10 bg-gray-500 w-5 h-5 flex flex-col justify-center rounded-full text-white">
+              {data?.data?.filter((post) => post.status === "Trashed").length}
             </span>
           </Tab>
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
-            <Published />
+            <Published
+              data={data?.data?.filter((post) => post.status === "Published")}
+              isLoading={isLoading}
+            />
           </Tab.Panel>
           <Tab.Panel>
-            <Draft />
+            <Draft
+              data={data?.data?.filter((post) => post.status === "Drafts")}
+              isLoading={isLoading}
+            />
           </Tab.Panel>
           <Tab.Panel>
-            <Trash />
+            <Trash
+              data={data?.data?.filter((post) => post.status === "Trashed")}
+              isLoading={isLoading}
+            />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

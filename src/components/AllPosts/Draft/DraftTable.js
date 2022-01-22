@@ -1,9 +1,23 @@
 import MaterialTable from "material-table";
-import { CircularProgress, Box } from "@mui/material";
+import { CircularProgress, Box, Tooltip, IconButton } from "@mui/material";
 import tableIcons from "../../Icons/tableIcons";
+import formatFullDate from "../../../helpers/formatFullDate";
+import EditModal from "./EditModal";
+import { useQueryClient, useMutation } from "react-query";
+import { updateArticleById } from "../../../constants/api";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const DraftTable = ({ voucherData, isLoading }) => {
-  const newData = [];
+const DraftTable = ({ data }) => {
+  const queryClient = useQueryClient();
+  const { mutate, isLoading } = useMutation(
+    (trashData) => updateArticleById(trashData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("getAllArticle");
+      },
+    }
+  );
+
   const renderLoading = isLoading ? (
     <Box
       sx={{
@@ -35,34 +49,37 @@ const DraftTable = ({ voucherData, isLoading }) => {
         title="Draft Table"
         columns={[
           {
-            title: "No.",
-            field: "number",
-          },
-          {
             title: "Title",
-            field: "code",
+            field: "title",
           },
           {
             title: "Category",
-            field: "keterangan",
+            field: "category",
             width: "50%",
           },
           {
-            title: "Date",
-            field: "date",
-            render: (rowData) => <p>Test</p>,
+            title: "Created",
+            field: "created_date",
+            render: (rowData) => <p>{formatFullDate(rowData.created_date)}</p>,
           },
           {
             title: "Action",
-            field: "user",
+            field: "action",
             render: (rowData) => (
-              <p>
-                {rowData.user.slice(0, 1).toUpperCase() + rowData.user.slice(1)}
-              </p>
+              <div className="flex space-x-3 items-center">
+                <EditModal data={rowData} />
+                <Tooltip title="Move to Trash">
+                  <IconButton
+                    onClick={() => mutate({ ...rowData, status: "Trashed" })}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
             ),
           },
         ]}
-        data={newData}
+        data={data}
         options={{
           exportButton: true,
           pageSizeOptions: [10, 20],

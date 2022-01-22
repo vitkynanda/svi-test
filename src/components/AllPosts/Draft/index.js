@@ -1,10 +1,10 @@
 import React from "react";
 import DraftTable from "./DraftTable";
 
-const index = () => {
+const index = ({ data, isLoading }) => {
   return (
     <div className="py-3">
-      <DraftTable />
+      <DraftTable data={data} isLoading={isLoading} />
     </div>
   );
 };

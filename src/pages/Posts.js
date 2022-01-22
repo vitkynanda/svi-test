@@ -13,7 +13,7 @@ const Posts = () => {
       <div className="grid grid-cols-3 gap-10 p-5">
         <div
           className="flex flex-col items-center justify-center cursor-pointer text-gray-700 bg-gray-100 space-y-2 hover:bg-gray-400 hover:text-white transition-all duration-300 border border-gray-300 rounded-lg h-32"
-          onClick={() => navigate("/posts/all-posts")}
+          onClick={() => navigate("/posts/all-post")}
         >
           <p>All Posts</p>
           <DynamicFeedIcon fontSize="large" />

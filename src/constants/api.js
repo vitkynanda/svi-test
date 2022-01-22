@@ -1,5 +1,5 @@
 export const postArticle = async (data) => {
-  const response = await fetch("http://localhost:11000/article/", {
+  const response = await fetch("http://localhost:11000/article", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -7,7 +7,8 @@ export const postArticle = async (data) => {
   return response.json();
 };
 
-export const updateArticleById = async (data, id) => {
+export const updateArticleById = async (data) => {
+  const { id } = data;
   const response = await fetch(`http://localhost:11000/article/${id}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

@@ -1,9 +1,27 @@
 import MaterialTable from "material-table";
-import { CircularProgress, Box } from "@mui/material";
+import { CircularProgress, Box, Tooltip, IconButton } from "@mui/material";
 import tableIcons from "../../Icons/tableIcons";
+import formatFullDate from "../../../helpers/formatFullDate";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useQueryClient, useMutation } from "react-query";
+import { deleteArticleById } from "../../../constants/api";
+import { toast } from "react-toastify";
 
-const TrashTable = ({ voucherData, isLoading }) => {
-  const newData = [];
+const TrashTable = ({ data }) => {
+  const queryClient = useQueryClient();
+  const { mutate, isLoading } = useMutation(
+    (trashData) => deleteArticleById(trashData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("getAllArticle");
+        toast.success("Post removed from database");
+      },
+      onError: (error) => {
+        toast.error("Something went wrong");
+      },
+    }
+  );
+
   const renderLoading = isLoading ? (
     <Box
       sx={{
@@ -35,34 +53,32 @@ const TrashTable = ({ voucherData, isLoading }) => {
         title="Trash Table"
         columns={[
           {
-            title: "No.",
-            field: "number",
-          },
-          {
             title: "Title",
-            field: "code",
+            field: "title",
           },
           {
             title: "Category",
-            field: "keterangan",
+            field: "category",
             width: "50%",
           },
           {
-            title: "Date",
-            field: "date",
-            render: (rowData) => <p>Test</p>,
+            title: "Updated",
+            field: "updated_date",
+            render: (rowData) => <p>{formatFullDate(rowData.created_date)}</p>,
           },
           {
             title: "Action",
             field: "user",
             render: (rowData) => (
-              <p>
-                {rowData.user.slice(0, 1).toUpperCase() + rowData.user.slice(1)}
-              </p>
+              <Tooltip title="Delete Forever">
+                <IconButton onClick={() => mutate(rowData.id)}>
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Tooltip>
             ),
           },
         ]}
-        data={newData}
+        data={data}
         options={{
           exportButton: true,
           pageSizeOptions: [10, 20],
