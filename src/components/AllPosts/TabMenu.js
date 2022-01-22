@@ -1,9 +1,20 @@
 import { Tab } from "@headlessui/react";
+import { useState } from "react";
 import Published from "./Published";
 import Draft from "./Draft";
 import Trash from "./Trash";
+import { useQuery } from "react-query";
+import { getAllArticle } from "../../constants/api";
 
 export default function TabMenu() {
+  const [params, setParams] = useState({
+    limit: 1,
+    offset: 1,
+  });
+
+  const { data, isLoading } = useQuery("getAllArticle", () =>
+    getAllArticle(params)
+  );
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }

@@ -3,15 +3,7 @@ import React, { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import { useMutation } from "react-query";
-
-const postArticle = async (data) => {
-  const response = await fetch("http://localhost:11000/article/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return response.json();
-};
+import { postArticle } from "../../constants/api";
 
 const PostForm = () => {
   const options = ["Sports", "Education", "Economics"];
@@ -19,6 +11,7 @@ const PostForm = () => {
     title: "",
     content: "",
     category: "",
+    status: "",
   });
 
   const mutation = useMutation((postData) => postArticle(postData));
@@ -68,6 +61,9 @@ const PostForm = () => {
       <div className="space-x-3">
         <Button
           onClick={() => {
+            setPostInput((prev) => {
+              return { ...prev, status: "Published" };
+            });
             mutation.mutate(postInput);
           }}
           variant="contained"
